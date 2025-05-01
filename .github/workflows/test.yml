@@ -1,9 +1,12 @@
+env:
+  RUNNER_DEBUG: 1
+
 name: 'build-test'
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
-      - master
+      - main
       - 'releases/*'
 
 jobs:

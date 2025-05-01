@@ -2,7 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", "helpers:pinGitHubActionDigestsToSemver"],
   "labels": ["🛠️ dependencies"],
-  "dependencyDashboardApproval": true,
+  "timezone": "Europe/Berlin",
+  "schedule": [
+    "* 14-17 * * 5"
+  ],
   "packageRules": [
     {
       "groupName": "golangci-lint",

@@ -26,3 +26,12 @@ export function binaryName(version: string, os: string, arch: string): string {
       throw new Error(`Unsupported OS found. OS: ${os} Arch: ${arch}`)
   }
 }
+
+export async function extractBinary(
+  path: string,
+  _version: string,
+  _os: string,
+  _arch: string
+): Promise<string> {
+  return path
+}

@@ -29927,6 +29927,9 @@ function binaryName(version, os, arch) {
             throw new Error(`Unsupported OS found. OS: ${os} Arch: ${arch}`);
     }
 }
+async function extractBinary(path, _version, _os, _arch) {
+    return path;
+}
 
 var toolCache = {};
 
@@ -32571,10 +32574,12 @@ async function download(version) {
     if (!version) {
         version = await latestVersion(githubRepository, toolName, defaultVersion);
     }
+    const runnerOs = getRunnerOS();
+    const runnerArch = getRunnerArch();
     const binaryFileName = toolName + getExecutableExtension();
-    const url = require$$0.format('https://github.com/%s/releases/download/%s/%s', githubRepository, version, binaryName(version, getRunnerOS(), getRunnerArch()));
-    let cachedToolpath = toolCacheExports.find(toolName, version);
-    if (!cachedToolpath) {
+    const url = require$$0.format('https://github.com/%s/releases/download/%s/%s', githubRepository, version, binaryName(version, runnerOs, runnerArch));
+    let cachedToolPath = toolCacheExports.find(toolName, version);
+    if (!cachedToolPath) {
         let downloadPath;
         try {
             downloadPath = await toolCacheExports.downloadTool(url);
@@ -32582,15 +32587,15 @@ async function download(version) {
         catch (exception) {
             throw new Error(require$$0.format('Failed to download %s from location %s. Error: %s', toolName, url, exception));
         }
-        await require$$1.promises.chmod(downloadPath, 0o777);
-        cachedToolpath = await toolCacheExports.cacheFile(downloadPath, binaryFileName, toolName, version);
+        const extractedPath = await extractBinary(downloadPath);
+        await require$$1.promises.chmod(extractedPath, 0o777);
+        await toolCacheExports.cacheFile(extractedPath, binaryFileName, toolName, version);
+        cachedToolPath = toolCacheExports.find(toolName, version);
+        if (!cachedToolPath) {
+            throw new Error(require$$0.format('%s executable not found in path %s', binaryFileName, cachedToolPath));
+        }
     }
-    const binaryPath = toolCacheExports.find(toolName, version);
-    if (!binaryPath) {
-        throw new Error(require$$0.format('%s executable not found in path %s', binaryFileName, cachedToolpath));
-    }
-    await require$$1.promises.chmod(binaryPath, 0o777);
-    return binaryPath;
+    return cachedToolPath;
 }
 /**
  * The main function for the action.

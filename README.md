@@ -1,6 +1,9 @@
 ## Setup Sops
 
-GitHub Action for installing [Mozilla/Sops](https://github.com/mozilla/sops)
+GitHub Action for installing [getsops/sops](https://github.com/getsops/sops)
+
+Forked from https://github.com/mdgreenwald/mozilla-sops-action at commit
+[d5d98cd](https://github.com/mdgreenwald/mozilla-sops-action/commit/d5d98cda6887cb60dd8bc4e358d5965910cf8824).
 
 #### Repurposed from [Azure/setup-helm](https://github.com/Azure/setup-helm)
 

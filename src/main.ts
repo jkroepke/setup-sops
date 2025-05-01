@@ -2,13 +2,13 @@
 // Licensed under the MIT license.
 
 import * as core from '@actions/core'
-
 import { HttpClient } from '@actions/http-client'
 import {
   binaryName,
   githubRepository,
   toolName,
-  defaultVersion
+  defaultVersion,
+  extractBinary
 } from './tool.js'
 import * as toolCache from '@actions/tool-cache'
 import * as util from 'util'
@@ -105,16 +105,18 @@ async function download(version: string): Promise<string> {
     version = await latestVersion(githubRepository, toolName, defaultVersion)
   }
 
+  const runnerOs = getRunnerOS()
+  const runnerArch = getRunnerArch()
   const binaryFileName = toolName + getExecutableExtension()
   const url = util.format(
     'https://github.com/%s/releases/download/%s/%s',
     githubRepository,
     version,
-    binaryName(version, getRunnerOS(), getRunnerArch())
+    binaryName(version, runnerOs, runnerArch)
   )
 
-  let cachedToolpath = toolCache.find(toolName, version)
-  if (!cachedToolpath) {
+  let cachedToolPath = toolCache.find(toolName, version)
+  if (!cachedToolPath) {
     let downloadPath
     try {
       downloadPath = await toolCache.downloadTool(url)
@@ -129,29 +131,29 @@ async function download(version: string): Promise<string> {
       )
     }
 
-    await fs.promises.chmod(downloadPath, 0o777)
-    cachedToolpath = await toolCache.cacheFile(
+    const extractedPath = await extractBinary(
       downloadPath,
-      binaryFileName,
-      toolName,
-      version
+      version,
+      runnerOs,
+      runnerArch
     )
-  }
 
-  const binaryPath = toolCache.find(toolName, version)
-  if (!binaryPath) {
-    throw new Error(
-      util.format(
-        '%s executable not found in path %s',
-        binaryFileName,
-        cachedToolpath
+    await fs.promises.chmod(extractedPath, 0o777)
+    await toolCache.cacheFile(extractedPath, binaryFileName, toolName, version)
+
+    cachedToolPath = toolCache.find(toolName, version)
+    if (!cachedToolPath) {
+      throw new Error(
+        util.format(
+          '%s executable not found in path %s',
+          binaryFileName,
+          cachedToolPath
+        )
       )
-    )
+    }
   }
 
-  await fs.promises.chmod(binaryPath, 0o777)
-
-  return binaryPath
+  return cachedToolPath
 }
 
 /**

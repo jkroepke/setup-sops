@@ -1,187 +1,157 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as path from 'path'
-import * as util from 'util'
-import * as fs from 'fs'
-import * as semver from 'semver'
-
-import * as toolCache from '@actions/tool-cache'
 import * as core from '@actions/core'
 
-const sopsToolName = 'sops'
-// renovate: github=getsops/sops
-const stableSopsVersion = 'v3.10.2'
-const sopsAllReleasesUrl = 'https://api.github.com/repos/getsops/sops/releases'
+import { HttpClient } from '@actions/http-client'
+import {
+  binaryName,
+  githubRepository,
+  toolName,
+  defaultVersion
+} from './tool.js'
+import * as toolCache from '@actions/tool-cache'
+import * as util from 'util'
+import fs from 'fs'
 
-type ResponseType = {
-  tag_name?: string
-}
-
+/**
+ * Get the executable extension based on the OS.
+ *
+ * @returns The executable extension for the current OS.
+ */
 function getExecutableExtension(): string {
-  const runnerOs = process.env['RUNNER_OS']! as string
-  if (runnerOs.match(/^Win/)) {
-    return '.exe'
-  }
-  return ''
+  return getRunnerOS() === 'windows' ? '.exe' : ''
 }
 
-function getSopsBinaryName(version: string): string {
+/**
+ * Get the architecture of the runner.
+ *
+ * @returns The architecture of the runner.
+ */
+function getRunnerArch(): string {
   const runnerArch = process.env['RUNNER_ARCH']! as string
-  const runnerOs = process.env['RUNNER_OS']! as string
-  const archExtension = runnerArch.startsWith('X') ? 'amd64' : 'arm64'
-
-  switch (runnerOs) {
-    case 'Linux':
-      return semver.lt(version, '3.8.0')
-        ? util.format('sops-%s.linux', version)
-        : util.format('sops-%s.linux.%s', version, archExtension)
-
-    case 'macOS':
-      return semver.lt(version, '3.8.0')
-        ? util.format('sops-%s.darwin', version)
-        : util.format('sops-%s.darwin.%s', version, archExtension)
-
-    case 'Windows':
-      return semver.lt(version, '3.9.0')
-        ? util.format('sops-%s.exe', version)
-        : util.format('sops-%s.%s.exe', version, archExtension)
-    default:
-      throw new Error(
-        `Unsupported OS found. OS: ${runnerOs} Arch: ${runnerArch}`
-      )
+  if (runnerArch.startsWith('X')) {
+    return 'amd64'
   }
+
+  return runnerArch
 }
 
-function getSopsDownloadURL(version: string): string {
-  return util.format(
-    'https://github.com/getsops/sops/releases/download/%s/%s',
-    version,
-    getSopsBinaryName(version)
+/**
+ * Get the OS of the runner.
+ *
+ * @returns The OS of the runner.
+ */
+function getRunnerOS(): string {
+  const runnerOs = process.env['RUNNER_OS']! as string
+  if (runnerOs.startsWith('Win')) {
+    return 'windows'
+  } else if (runnerOs.startsWith('Linux')) {
+    return 'linux'
+  } else if (runnerOs.startsWith('macOS')) {
+    return 'darwin'
+  }
+
+  throw new Error(
+    `Unsupported OS found. OS: ${runnerOs} Arch: ${getRunnerArch()}`
   )
 }
 
-async function getStableSopsVersion(): Promise<string> {
+/**
+ * Get the latest version of the tool from GitHub releases.
+ *
+ * @param githubRepo The GitHub repository in the format 'owner/repo'.
+ * @param toolName The name of the tool.
+ * @param stableVersion The stable version to fall back to if the latest version cannot be retrieved.
+ * @returns The latest version of the tool.
+ */
+async function latestVersion(
+  githubRepo: string,
+  toolName: string,
+  stableVersion: string
+): Promise<string> {
   try {
-    const downloadPath = await toolCache.downloadTool(sopsAllReleasesUrl)
-    const responseArray = JSON.parse(
-      fs.readFileSync(downloadPath, 'utf8').toString().trim()
+    const httpClient = new HttpClient()
+    const res = await httpClient.getJson<{ tag_name: string }>(
+      `https://github.com/${githubRepo}/releases/latest`
     )
-    let latestSopsVersion = semver.clean(stableSopsVersion) || stableSopsVersion // Ensure non-null value
-    responseArray.forEach((response: ResponseType) => {
-      if (response && response.tag_name) {
-        const currentSopsVersion =
-          semver.clean(response.tag_name.toString()) || '' // Ensure non-null value
-        if (
-          currentSopsVersion &&
-          currentSopsVersion.indexOf('rc') === -1 &&
-          semver.gt(currentSopsVersion, latestSopsVersion)
-        ) {
-          // If current sops version is not a pre-release and is greater than the latest sops version
-          latestSopsVersion = currentSopsVersion
-        }
-      }
-    })
-    latestSopsVersion = 'v' + latestSopsVersion
-    return latestSopsVersion
-  } catch (error) {
-    core.warning(
-      util.format(
-        'Cannot get the latest Sops info from %s. Error %s. Using default Sops version %s.',
-        sopsAllReleasesUrl,
-        error,
-        stableSopsVersion
+
+    if (res.statusCode !== 200 || !res.result || !res.result.tag_name) {
+      core.warning(
+        `Cannot get the latest ${toolName} info from https://github.com/${githubRepo}/releases/latest. Invalid response: ${JSON.stringify(res)}. Using default version ${stableVersion}.`
       )
-    )
-  }
 
-  return stableSopsVersion
-}
-
-async function walk(
-  dir: string,
-  fileToFind: string,
-  filelist: string[] = []
-): Promise<string[]> {
-  const entries = await fs.promises.readdir(dir, { withFileTypes: true })
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name)
-    if (entry.isDirectory()) {
-      await walk(fullPath, fileToFind, filelist)
-    } else {
-      core.debug(entry.name)
-      if (entry.name === fileToFind) {
-        filelist.push(fullPath)
-      }
+      return stableVersion
     }
+
+    return res.result.tag_name.trim()
+  } catch (e) {
+    core.warning(
+      `Cannot get the latest ${toolName} info from https://github.com/${githubRepo}/releases/latest. Error ${e}. Using default version ${stableVersion}.`
+    )
   }
 
-  return filelist
+  return stableVersion
 }
 
-async function downloadSops(version: string): Promise<string> {
+/**
+ * Download the tool from GitHub releases.
+ *
+ * @param version The version of the tool to download.
+ * @returns The path to the downloaded tool.
+ */
+async function download(version: string): Promise<string> {
   if (!version) {
-    version = await getStableSopsVersion()
+    version = await latestVersion(githubRepository, toolName, defaultVersion)
   }
 
-  const sopsBinaryName = sopsToolName + getExecutableExtension()
+  const binaryFileName = toolName + getExecutableExtension()
+  const url = util.format(
+    'https://github.com/%s/releases/download/%s/%s',
+    githubRepository,
+    version,
+    binaryName(version, getRunnerOS(), getRunnerArch())
+  )
 
-  let cachedToolpath = toolCache.find(sopsToolName, version)
+  let cachedToolpath = toolCache.find(toolName, version)
   if (!cachedToolpath) {
-    let sopsDownloadPath
+    let downloadPath
     try {
-      sopsDownloadPath = await toolCache.downloadTool(
-        getSopsDownloadURL(version)
-      )
+      downloadPath = await toolCache.downloadTool(url)
     } catch (exception) {
       throw new Error(
         util.format(
-          'Failed to download Sops from location %s. Error: %s',
-          getSopsDownloadURL(version),
+          'Failed to download %s from location %s. Error: %s',
+          toolName,
+          url,
           exception
         )
       )
     }
 
-    await fs.promises.chmod(sopsDownloadPath, 0o777)
+    await fs.promises.chmod(downloadPath, 0o777)
     cachedToolpath = await toolCache.cacheFile(
-      sopsDownloadPath,
-      sopsBinaryName,
-      sopsToolName,
+      downloadPath,
+      binaryFileName,
+      toolName,
       version
     )
   }
 
-  const sopsPath = await findSopsBinary(cachedToolpath, sopsBinaryName)
-  if (!sopsPath) {
+  const binaryPath = toolCache.find(toolName, version)
+  if (!binaryPath) {
     throw new Error(
       util.format(
         '%s executable not found in path %s',
-        sopsBinaryName,
+        binaryFileName,
         cachedToolpath
       )
     )
   }
 
-  await fs.promises.chmod(sopsPath, 0o777)
-  return sopsPath
-}
+  await fs.promises.chmod(binaryPath, 0o777)
 
-async function findSopsBinary(
-  rootFolder: string,
-  sopsBinName: string
-): Promise<string> {
-  await fs.promises.chmod(rootFolder, 0o777)
-  const files = await walk(rootFolder, sopsBinName)
-
-  if (!files) {
-    throw new Error(
-      util.format('Sops executable not found in path ', rootFolder)
-    )
-  } else {
-    return files[0]
-  }
+  return binaryPath
 }
 
 /**
@@ -193,28 +163,18 @@ export async function run(): Promise<void> {
   try {
     let version = core.getInput('version', { required: true })
     if (version.toLocaleLowerCase() === 'latest') {
-      version = await getStableSopsVersion()
+      version = await latestVersion(githubRepository, toolName, defaultVersion)
     } else if (!version.toLocaleLowerCase().startsWith('v')) {
       version = 'v' + version
     }
 
-    const cachedPath = await downloadSops(version)
+    const cachedPath = await download(version)
 
-    try {
-      if (
-        process.env['PATH'] &&
-        !process.env['PATH'].startsWith(path.dirname(cachedPath))
-      ) {
-        core.addPath(path.dirname(cachedPath))
-      }
-    } catch {
-      //do nothing, set as output variable
-    }
-
-    console.log(
-      `Sops tool version: '${version}' has been cached at ${cachedPath}`
+    core.addPath(cachedPath)
+    core.info(
+      `${toolName} version: '${version}' has been cached at ${cachedPath}`
     )
-    core.setOutput('sops-path', cachedPath)
+    core.setOutput('path', cachedPath)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)

@@ -1,5 +1,5 @@
 {
-  "name": "setup-sops",
+  "name": "@jkroepke/setup-sops",
   "version": "0.0.0",
   "type": "module",
   "private": true,

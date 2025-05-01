@@ -20,6 +20,7 @@ docker run -it --rm \
 mozilla-sops-action:build \
 /bin/sh
 ```
+
 ## Create artifacts
 
 ```bash
@@ -32,9 +33,7 @@ npm run publish
 
 ## Publish the changes
 
-Add and commit changes.
-Push to remote.
-Merge PR with changes into Master.
+Add and commit changes. Push to remote. Merge PR with changes into Master.
 
 ```
 git tag v99

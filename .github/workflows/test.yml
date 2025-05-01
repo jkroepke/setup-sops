@@ -1,27 +1,44 @@
-name: "build-test"
+name: 'build-test'
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
-      - main
+      - master
       - 'releases/*'
 
 jobs:
   build: # make sure build/ci work properly
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - run: |
-        npm install
-        npm run build
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install
+          npm run all
+      - run: |
+          git diff --exit-code ':!dist/index.js.map' ':!badges/coverage.svg'
   test: # make sure the action works on a clean machine without building
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest] 
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      id: install
-    - name: Get the sops version
-      run: sops --version
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          version: 'latest'
+      - run: sops --version
+      - uses: ./
+        with:
+          version: 'v3.10.0'
+      - run: sops --version
+      - uses: ./
+        with:
+          version: 'v3.8.0'
+      - run: sops --version
+      - uses: ./
+        with:
+          version: 'v3.5.0'
+      - run: sops --version

@@ -32477,6 +32477,7 @@ var coreExports = requireCore();
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 const sopsToolName = 'sops';
+// renovate: github=getsops/sops
 const stableSopsVersion = 'v3.10.2';
 const sopsAllReleasesUrl = 'https://api.github.com/repos/getsops/sops/releases';
 function getExecutableExtension() {

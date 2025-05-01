@@ -10,7 +10,7 @@ import * as toolCache from '@actions/tool-cache'
 import * as core from '@actions/core'
 
 const sopsToolName = 'sops'
-# renovate: github=getsops/sops
+// renovate: github=getsops/sops
 const stableSopsVersion = 'v3.10.2'
 const sopsAllReleasesUrl = 'https://api.github.com/repos/getsops/sops/releases'
 

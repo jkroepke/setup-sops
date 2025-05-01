@@ -11,13 +11,60 @@ import {
   defaultVersion
 } from './tool.js'
 import * as toolCache from '@actions/tool-cache'
-import util from 'util'
+import * as util from 'util'
 import fs from 'fs'
 
+/**
+ * Get the executable extension based on the OS.
+ *
+ * @returns The executable extension for the current OS.
+ */
 function getExecutableExtension(): string {
   return getRunnerOS() === 'windows' ? '.exe' : ''
 }
 
+/**
+ * Get the architecture of the runner.
+ *
+ * @returns The architecture of the runner.
+ */
+function getRunnerArch(): string {
+  const runnerArch = process.env['RUNNER_ARCH']! as string
+  if (runnerArch.startsWith('X')) {
+    return 'amd64'
+  }
+
+  return runnerArch
+}
+
+/**
+ * Get the OS of the runner.
+ *
+ * @returns The OS of the runner.
+ */
+function getRunnerOS(): string {
+  const runnerOs = process.env['RUNNER_OS']! as string
+  if (runnerOs.startsWith('Win')) {
+    return 'windows'
+  } else if (runnerOs.startsWith('Linux')) {
+    return 'linux'
+  } else if (runnerOs.startsWith('macOS')) {
+    return 'darwin'
+  }
+
+  throw new Error(
+    `Unsupported OS found. OS: ${runnerOs} Arch: ${getRunnerArch()}`
+  )
+}
+
+/**
+ * Get the latest version of the tool from GitHub releases.
+ *
+ * @param githubRepo The GitHub repository in the format 'owner/repo'.
+ * @param toolName The name of the tool.
+ * @param stableVersion The stable version to fall back to if the latest version cannot be retrieved.
+ * @returns The latest version of the tool.
+ */
 async function latestVersion(
   githubRepo: string,
   toolName: string,
@@ -37,7 +84,7 @@ async function latestVersion(
       return stableVersion
     }
 
-    return res.result.tag_name
+    return res.result.tag_name.trim()
   } catch (e) {
     core.warning(
       `Cannot get the latest ${toolName} info from https://github.com/${githubRepo}/releases/latest. Error ${e}. Using default version ${stableVersion}.`
@@ -47,37 +94,24 @@ async function latestVersion(
   return stableVersion
 }
 
-function getRunnerArch(): string {
-  const runnerArch = process.env['RUNNER_ARCH']! as string
-  if (runnerArch.startsWith('X')) {
-    return 'amd64'
-  }
-
-  return runnerArch
-}
-
-function getRunnerOS(): string {
-  const runnerOs = process.env['RUNNER_OS']! as string
-  if (runnerOs.match(/^Win/)) {
-    return 'windows'
-  } else if (runnerOs.match(/^Linux/)) {
-    return 'linux'
-  } else if (runnerOs.match(/^Darwin|MacOS/)) {
-    return 'darwin'
-  }
-
-  throw new Error(
-    `Unsupported OS found. OS: ${runnerOs} Arch: ${getRunnerArch()}`
-  )
-}
-
+/**
+ * Download the tool from GitHub releases.
+ *
+ * @param version The version of the tool to download.
+ * @returns The path to the downloaded tool.
+ */
 async function download(version: string): Promise<string> {
   if (!version) {
     version = await latestVersion(githubRepository, toolName, defaultVersion)
   }
 
-  const url = downloadURL(version)
-  const binaryName = toolName + getExecutableExtension()
+  const binaryFileName = toolName + getExecutableExtension()
+  const url = util.format(
+    'https://github.com/%s/releases/download/%s/%s',
+    githubRepository,
+    version,
+    binaryName(version, getRunnerOS(), getRunnerArch())
+  )
 
   let cachedToolpath = toolCache.find(toolName, version)
   if (!cachedToolpath) {
@@ -88,8 +122,8 @@ async function download(version: string): Promise<string> {
       throw new Error(
         util.format(
           'Failed to download %s from location %s. Error: %s',
-          binaryName,
-          downloadPath,
+          toolName,
+          url,
           exception
         )
       )
@@ -98,7 +132,7 @@ async function download(version: string): Promise<string> {
     await fs.promises.chmod(downloadPath, 0o777)
     cachedToolpath = await toolCache.cacheFile(
       downloadPath,
-      binaryName,
+      binaryFileName,
       toolName,
       version
     )
@@ -109,7 +143,7 @@ async function download(version: string): Promise<string> {
     throw new Error(
       util.format(
         '%s executable not found in path %s',
-        binaryName,
+        binaryFileName,
         cachedToolpath
       )
     )
@@ -118,15 +152,6 @@ async function download(version: string): Promise<string> {
   await fs.promises.chmod(binaryPath, 0o777)
 
   return binaryPath
-}
-
-function downloadURL(version: string): string {
-  return util.format(
-    'https://github.com/%s/releases/download/%s/%s',
-    githubRepository,
-    version,
-    binaryName(version, getRunnerOS(), getRunnerArch())
-  )
 }
 
 /**

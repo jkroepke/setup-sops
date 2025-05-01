@@ -1,5 +1,5 @@
-import require$$0 from 'os';
-import require$$0$1 from 'crypto';
+import require$$0$1 from 'os';
+import require$$0$2 from 'crypto';
 import require$$1 from 'fs';
 import require$$1$5 from 'path';
 import require$$2 from 'http';
@@ -8,7 +8,8 @@ import require$$0$4 from 'net';
 import require$$1$1 from 'tls';
 import require$$4 from 'events';
 import require$$0$3 from 'assert';
-import require$$0$2 from 'util';
+import * as require$$0 from 'util';
+import require$$0__default from 'util';
 import require$$0$5 from 'stream';
 import require$$7 from 'buffer';
 import require$$8 from 'querystring';
@@ -113,7 +114,7 @@ function requireCommand () {
 	};
 	Object.defineProperty(command, "__esModule", { value: true });
 	command.issue = command.issueCommand = void 0;
-	const os = __importStar(require$$0);
+	const os = __importStar(require$$0$1);
 	const utils_1 = requireUtils$1();
 	/**
 	 * Commands
@@ -221,9 +222,9 @@ function requireFileCommand () {
 	fileCommand.prepareKeyValueMessage = fileCommand.issueFileCommand = void 0;
 	// We use any as a valid input type
 	/* eslint-disable @typescript-eslint/no-explicit-any */
-	const crypto = __importStar(require$$0$1);
+	const crypto = __importStar(require$$0$2);
 	const fs = __importStar(require$$1);
-	const os = __importStar(require$$0);
+	const os = __importStar(require$$0$1);
 	const utils_1 = requireUtils$1();
 	function issueFileCommand(command, message) {
 	    const filePath = process.env[`GITHUB_${command}`];
@@ -376,7 +377,7 @@ function requireTunnel$1 () {
 	var http = require$$2;
 	var https = require$$3;
 	var events = require$$4;
-	var util = require$$0$2;
+	var util = require$$0__default;
 
 
 	tunnel$1.httpOverHttp = httpOverHttp;
@@ -1097,7 +1098,7 @@ function requireUtil$6 () {
 	const net = require$$0$4;
 	const { InvalidArgumentError } = requireErrors();
 	const { Blob } = require$$7;
-	const nodeUtil = require$$0$2;
+	const nodeUtil = require$$0__default;
 	const { stringify } = require$$8;
 	const { headerNameLowerCasedRecord } = requireConstants$5();
 
@@ -4728,7 +4729,7 @@ function requireWebidl () {
 	if (hasRequiredWebidl) return webidl_1;
 	hasRequiredWebidl = 1;
 
-	const { types } = require$$0$2;
+	const { types } = require$$0__default;
 	const { hasOwn, toUSVString } = requireUtil$5();
 
 	/** @type {import('../../types/webidl').Webidl} */
@@ -6019,7 +6020,7 @@ function requireFile () {
 	hasRequiredFile = 1;
 
 	const { Blob, File: NativeFile } = require$$7;
-	const { types } = require$$0$2;
+	const { types } = require$$0__default;
 	const { kState } = requireSymbols$3();
 	const { isBlobLike } = requireUtil$5();
 	const { webidl } = requireWebidl();
@@ -13376,7 +13377,7 @@ function requireMockUtils () {
 	  types: {
 	    isPromise
 	  }
-	} = require$$0$2;
+	} = require$$0__default;
 
 	function matchValue (match, value) {
 	  if (typeof match === 'string') {
@@ -13936,7 +13937,7 @@ function requireMockClient () {
 	if (hasRequiredMockClient) return mockClient;
 	hasRequiredMockClient = 1;
 
-	const { promisify } = require$$0$2;
+	const { promisify } = require$$0__default;
 	const Client = requireClient();
 	const { buildMockDispatch } = requireMockUtils();
 	const {
@@ -14003,7 +14004,7 @@ function requireMockPool () {
 	if (hasRequiredMockPool) return mockPool;
 	hasRequiredMockPool = 1;
 
-	const { promisify } = require$$0$2;
+	const { promisify } = require$$0__default;
 	const Pool = requirePool();
 	const { buildMockDispatch } = requireMockUtils();
 	const {
@@ -14967,7 +14968,7 @@ function requireHeaders () {
 	  isValidHeaderName,
 	  isValidHeaderValue
 	} = requireUtil$5();
-	const util = require$$0$2;
+	const util = require$$0__default;
 	const { webidl } = requireWebidl();
 	const assert = require$$0$3;
 
@@ -15576,7 +15577,7 @@ function requireResponse () {
 	const { URLSerializer } = requireDataURL();
 	const { kHeadersList, kConstruct } = requireSymbols$4();
 	const assert = require$$0$3;
-	const { types } = require$$0$2;
+	const { types } = require$$0__default;
 
 	const ReadableStream = globalThis.ReadableStream || require$$14.ReadableStream;
 	const textEncoder = new TextEncoder('utf-8');
@@ -19577,7 +19578,7 @@ function requireUtil$3 () {
 	const { getEncoding } = requireEncoding();
 	const { DOMException } = requireConstants$4();
 	const { serializeAMimeType, parseMIMEType } = requireDataURL();
-	const { types } = require$$0$2;
+	const { types } = require$$0__default;
 	const { StringDecoder } = require$$6;
 	const { btoa } = require$$7;
 
@@ -23554,7 +23555,7 @@ function requireWebsocket () {
 	const { ByteParser } = requireReceiver();
 	const { kEnumerableProperty, isBlobLike } = requireUtil$6();
 	const { getGlobalDispatcher } = requireGlobal();
-	const { types } = require$$0$2;
+	const { types } = require$$0__default;
 
 	let experimentalWarned = false;
 
@@ -25199,7 +25200,7 @@ function requireSummary () {
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = void 0;
-		const os_1 = require$$0;
+		const os_1 = require$$0$1;
 		const fs_1 = require$$1;
 		const { access, appendFile, writeFile } = fs_1.promises;
 		exports.SUMMARY_ENV_VAR = 'GITHUB_STEP_SUMMARY';
@@ -26088,7 +26089,7 @@ function requireToolrunner () {
 	};
 	Object.defineProperty(toolrunner, "__esModule", { value: true });
 	toolrunner.argStringToArray = toolrunner.ToolRunner = void 0;
-	const os = __importStar(require$$0);
+	const os = __importStar(require$$0$1);
 	const events = __importStar(require$$4);
 	const child = __importStar(require$$2$2);
 	const path = __importStar(require$$1$5);
@@ -26831,7 +26832,7 @@ function requirePlatform () {
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.getDetails = exports.isLinux = exports.isMacOS = exports.isWindows = exports.arch = exports.platform = void 0;
-		const os_1 = __importDefault(require$$0);
+		const os_1 = __importDefault(require$$0$1);
 		const exec = __importStar(requireExec());
 		const getWindowsInfo = () => __awaiter(void 0, void 0, void 0, function* () {
 		    const { stdout: version } = yield exec.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Version"', undefined, {
@@ -26934,7 +26935,7 @@ function requireCore () {
 		const command_1 = requireCommand();
 		const file_command_1 = requireFileCommand();
 		const utils_1 = requireUtils$1();
-		const os = __importStar(require$$0);
+		const os = __importStar(require$$0$1);
 		const path = __importStar(require$$1$5);
 		const oidc_utils_1 = requireOidcUtils();
 		/**
@@ -29912,16 +29913,16 @@ function binaryName(version, os, arch) {
     switch (os) {
         case 'linux':
             return semverExports.lt(version, '3.8.0')
-                ? `${toolName}-${version}.linux`
-                : `${toolName}-${version}.linux.${arch}`;
+                ? `${toolName}-v${version}.linux`
+                : `${toolName}-v${version}.linux.${arch}`;
         case 'darwin':
             return semverExports.lt(version, '3.8.0')
-                ? `${toolName}-${version}.darwin`
-                : `${toolName}-${version}.darwin.${arch}`;
+                ? `${toolName}-v${version}.darwin`
+                : `${toolName}-v${version}.darwin.${arch}`;
         case 'windows':
             return semverExports.lt(version, '3.9.0')
-                ? `${toolName}-${version}.exe`
-                : `${toolName}-${version}-${arch}.exe`;
+                ? `${toolName}-v${version}.exe`
+                : `${toolName}-v${version}.${arch}.exe`;
         default:
             throw new Error(`Unsupported OS found. OS: ${os} Arch: ${arch}`);
     }
@@ -31632,7 +31633,7 @@ function requireManifest () {
 		const core_1 = requireCore();
 		// needs to be require for core node modules to be mocked
 		/* eslint @typescript-eslint/no-require-imports: 0 */
-		const os = require$$0;
+		const os = require$$0$1;
 		const cp = require$$2$2;
 		const fs = require$$1;
 		function _findMatch(versionSpec, stable, candidates, archFilter) {
@@ -31863,15 +31864,15 @@ function requireToolCache () {
 	toolCache.evaluateVersions = toolCache.isExplicitVersion = toolCache.findFromManifest = toolCache.getManifestFromRepo = toolCache.findAllVersions = toolCache.find = toolCache.cacheFile = toolCache.cacheDir = toolCache.extractZip = toolCache.extractXar = toolCache.extractTar = toolCache.extract7z = toolCache.downloadTool = toolCache.HTTPError = void 0;
 	const core = __importStar(requireCore());
 	const io = __importStar(requireIo());
-	const crypto = __importStar(require$$0$1);
+	const crypto = __importStar(require$$0$2);
 	const fs = __importStar(require$$1);
 	const mm = __importStar(requireManifest());
-	const os = __importStar(require$$0);
+	const os = __importStar(require$$0$1);
 	const path = __importStar(require$$1$5);
 	const httpm = __importStar(requireLib());
 	const semver = __importStar(requireSemver());
 	const stream = __importStar(require$$0$5);
-	const util = __importStar(require$$0$2);
+	const util = __importStar(require$$0__default);
 	const assert_1 = require$$0$3;
 	const exec_1 = requireExec();
 	const retry_helper_1 = requireRetryHelper();
@@ -32499,9 +32500,52 @@ var toolCacheExports = requireToolCache();
 
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+/**
+ * Get the executable extension based on the OS.
+ *
+ * @returns The executable extension for the current OS.
+ */
 function getExecutableExtension() {
     return getRunnerOS() === 'windows' ? '.exe' : '';
 }
+/**
+ * Get the architecture of the runner.
+ *
+ * @returns The architecture of the runner.
+ */
+function getRunnerArch() {
+    const runnerArch = process.env['RUNNER_ARCH'];
+    if (runnerArch.startsWith('X')) {
+        return 'amd64';
+    }
+    return runnerArch;
+}
+/**
+ * Get the OS of the runner.
+ *
+ * @returns The OS of the runner.
+ */
+function getRunnerOS() {
+    const runnerOs = process.env['RUNNER_OS'];
+    if (runnerOs.startsWith('Win')) {
+        return 'windows';
+    }
+    else if (runnerOs.startsWith('Linux')) {
+        return 'linux';
+    }
+    else if (runnerOs.startsWith('macOS')) {
+        return 'darwin';
+    }
+    throw new Error(`Unsupported OS found. OS: ${runnerOs} Arch: ${getRunnerArch()}`);
+}
+/**
+ * Get the latest version of the tool from GitHub releases.
+ *
+ * @param githubRepo The GitHub repository in the format 'owner/repo'.
+ * @param toolName The name of the tool.
+ * @param stableVersion The stable version to fall back to if the latest version cannot be retrieved.
+ * @returns The latest version of the tool.
+ */
 async function latestVersion(githubRepo, toolName, stableVersion) {
     try {
         const httpClient = new libExports.HttpClient();
@@ -32510,39 +32554,25 @@ async function latestVersion(githubRepo, toolName, stableVersion) {
             coreExports.warning(`Cannot get the latest ${toolName} info from https://github.com/${githubRepo}/releases/latest. Invalid response: ${JSON.stringify(res)}. Using default version ${stableVersion}.`);
             return stableVersion;
         }
-        return res.result.tag_name;
+        return res.result.tag_name.trim();
     }
     catch (e) {
         coreExports.warning(`Cannot get the latest ${toolName} info from https://github.com/${githubRepo}/releases/latest. Error ${e}. Using default version ${stableVersion}.`);
     }
     return stableVersion;
 }
-function getRunnerArch() {
-    const runnerArch = process.env['RUNNER_ARCH'];
-    if (runnerArch.startsWith('X')) {
-        return 'amd64';
-    }
-    return runnerArch;
-}
-function getRunnerOS() {
-    const runnerOs = process.env['RUNNER_OS'];
-    if (runnerOs.match(/^Win/)) {
-        return 'windows';
-    }
-    else if (runnerOs.match(/^Linux/)) {
-        return 'linux';
-    }
-    else if (runnerOs.match(/^Darwin|MacOS/)) {
-        return 'darwin';
-    }
-    throw new Error(`Unsupported OS found. OS: ${runnerOs} Arch: ${getRunnerArch()}`);
-}
+/**
+ * Download the tool from GitHub releases.
+ *
+ * @param version The version of the tool to download.
+ * @returns The path to the downloaded tool.
+ */
 async function download(version) {
     if (!version) {
         version = await latestVersion(githubRepository, toolName, defaultVersion);
     }
-    const url = downloadURL(version);
-    const binaryName = toolName + getExecutableExtension();
+    const binaryFileName = toolName + getExecutableExtension();
+    const url = require$$0.format('https://github.com/%s/releases/download/%s/%s', githubRepository, version, binaryName(version, getRunnerOS(), getRunnerArch()));
     let cachedToolpath = toolCacheExports.find(toolName, version);
     if (!cachedToolpath) {
         let downloadPath;
@@ -32550,20 +32580,17 @@ async function download(version) {
             downloadPath = await toolCacheExports.downloadTool(url);
         }
         catch (exception) {
-            throw new Error(require$$0$2.format('Failed to download %s from location %s. Error: %s', binaryName, downloadPath, exception));
+            throw new Error(require$$0.format('Failed to download %s from location %s. Error: %s', toolName, url, exception));
         }
         await require$$1.promises.chmod(downloadPath, 0o777);
-        cachedToolpath = await toolCacheExports.cacheFile(downloadPath, binaryName, toolName, version);
+        cachedToolpath = await toolCacheExports.cacheFile(downloadPath, binaryFileName, toolName, version);
     }
     const binaryPath = toolCacheExports.find(toolName, version);
     if (!binaryPath) {
-        throw new Error(require$$0$2.format('%s executable not found in path %s', binaryName, cachedToolpath));
+        throw new Error(require$$0.format('%s executable not found in path %s', binaryFileName, cachedToolpath));
     }
     await require$$1.promises.chmod(binaryPath, 0o777);
     return binaryPath;
-}
-function downloadURL(version) {
-    return require$$0$2.format('https://github.com/%s/releases/download/%s/%s', githubRepository, version, binaryName(version, getRunnerOS(), getRunnerArch()));
 }
 /**
  * The main function for the action.

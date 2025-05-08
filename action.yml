@@ -1,18 +1,18 @@
 name: 'sops tools installer'
-description:
-  'Install a specific version of the sops binary. Acceptable values are latest
-  or any semantic version string like 1.15.0'
+description: |-
+  Install a specific version of the sops binary. Acceptable values are latest
+  or any semantic version string like 0.31.0.
 inputs:
   version:
     description: 'Version of sops'
     required: true
     default: 'latest'
 outputs:
-  sops-path:
+  path:
     description: 'Path to the cached sops binary'
 branding:
-  icon: 'unlock'
+  icon: 'terminal'
   color: 'gray-dark'
 runs:
   using: node20
-  main: dist/index.js
+  main: 'dist/index.js'

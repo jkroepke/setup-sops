@@ -35,3 +35,7 @@ export async function extractBinary(
 ): Promise<string> {
   return path
 }
+
+export function getVersionArguments(): string[] {
+  return ['--version']
+}

@@ -27246,6 +27246,8 @@ function requireCore () {
 
 var coreExports = requireCore();
 
+var execExports = requireExec();
+
 var libExports = requireLib();
 
 var toolCache = {};
@@ -32499,6 +32501,9 @@ function binaryName(version, os, arch) {
 async function extractBinary(path, _version, _os, _arch) {
     return path;
 }
+function getVersionArguments() {
+    return ['--version'];
+}
 
 /**
  * Get the executable extension based on the OS.
@@ -32619,6 +32624,7 @@ async function run() {
         coreExports.addPath(cachedPath);
         coreExports.info(`${toolName} version: '${version}' has been cached at ${cachedPath}`);
         coreExports.setOutput('path', cachedPath);
+        await execExports.exec(cachedPath + '/' + toolName + getExecutableExtension(), getVersionArguments());
     }
     catch (error) {
         // Fail the workflow run if an error occurs

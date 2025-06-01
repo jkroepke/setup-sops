@@ -1,7 +1,8 @@
 [![CI](https://github.com/jkroepke/setup-sops/actions/workflows/ci.yml/badge.svg)](https://github.com/jkroepke/setup-sops/actions/workflows/ci.yml)
-[![GitHub license](https://img.shields.io/github/license/jkroepke/setup-sops)](https://github.com/jkroepke/setup-sops/blob/master/LICENSE)
-[![Current Release](https://img.shields.io/github/release/jkroepke/setup-sops.svg?logo=github)](https://github.com/jkroepke/setup-sops/releases/latest)
+[![GitHub license](https://img.shields.io/github/license/jkroepke/setup-sops?style=flat&logo=github)](https://github.com/jkroepke/setup-sops/blob/master/LICENSE)
+[![Current Release](https://img.shields.io/github/release/jkroepke/setup-sops.svg?style=flat&logo=github)](https://github.com/jkroepke/setup-sops/releases/latest)
 [![GitHub Repo stars](https://img.shields.io/github/stars/jkroepke/setup-sops?style=flat&logo=github)](https://github.com/jkroepke/setup-sops/stargazers)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 # Setup sops
 

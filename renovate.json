@@ -32,6 +32,10 @@
       "postUpdateOptions": ["npmDedupe"]
     },
     {
+      "matchPackageNames": ["ts-jest"],
+      "groupName": "jest monorepo"
+    },
+    {
       "groupName": "GitHub Actions",
       "matchManagers": ["github-actions"],
       "semanticCommitScope": "github-actions"

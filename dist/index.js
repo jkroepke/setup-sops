@@ -32524,7 +32524,7 @@ var semverExports = requireSemver();
 const toolName = 'sops';
 const githubRepository = 'getsops/sops';
 // renovate: github=getsops/sops
-const defaultVersion = 'v3.10.2';
+const defaultVersion = 'v3.11.0';
 function binaryName(version, os, arch) {
     version = semverExports.clean(version) || version;
     switch (os) {

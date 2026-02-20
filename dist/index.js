@@ -32821,7 +32821,7 @@ function _getGlobal(key, defaultValue) {
 
 const toolName = 'sops';
 const githubRepository = 'getsops/sops';
-// renovate: github=getsops/sops
+// renovate: github-releases=getsops/sops
 const defaultVersion = 'v3.11.0';
 function binaryName(version, os, arch) {
     version = semverExports.clean(version) || version;

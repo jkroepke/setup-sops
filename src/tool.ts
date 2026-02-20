@@ -3,7 +3,7 @@ import { clean, lt } from 'semver'
 export const toolName = 'sops'
 export const githubRepository = 'getsops/sops'
 
-// renovate: github=getsops/sops
+// renovate: github-releases=getsops/sops
 export const defaultVersion = 'v3.11.0'
 
 export function binaryName(version: string, os: string, arch: string): string {

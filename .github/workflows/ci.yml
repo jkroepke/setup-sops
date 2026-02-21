@@ -35,23 +35,22 @@ jobs:
       RUNNER_DEBUG: 1
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: 'false'
       - uses: ./
         with:
           version: 'latest'
-      - name: Get the version
-        run: stackit --version
+      - run: sops --version
       - uses: ./
         with:
-          version: v0.30.0
-      - name: Get the version
-        run: stackit --version | grep 0.30.0
+          version: 'v3.10.0'
+      - run: sops --version | grep 3.10.0
       - uses: ./
         with:
-          version: 0.28.0
-      - name: Get the version
-        run: stackit --version | grep 0.28.0
+          version: 'v3.8.0'
+      - run: sops --version | grep 3.8.0
+      - uses: ./
+        with:
+          version: 'v3.5.0'
+      - run: sops --version | grep 3.5.0
 
   super-lint:
     name: super-lint

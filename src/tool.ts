@@ -4,7 +4,7 @@ export const toolName = 'sops'
 export const githubRepository = 'getsops/sops'
 
 // renovate: github-releases=getsops/sops
-export const defaultVersion = 'v3.12.1'
+export const defaultVersion = 'v3.12.2'
 
 export function binaryName(version: string, os: string, arch: string): string {
   version = clean(version) || version

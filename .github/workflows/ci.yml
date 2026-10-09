@@ -37,19 +37,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: 'false'
-      - uses: ./
+      - uses: $/
         with:
           version: 'latest'
       - run: sops --version
-      - uses: ./
+      - uses: $/
         with:
           version: 'v3.10.0'
       - run: sops --version | grep 3.10.0
-      - uses: ./
+      - uses: $/
         with:
           version: 'v3.8.0'
       - run: sops --version | grep 3.8.0
-      - uses: ./
+      - uses: $/
         with:
           version: 'v3.5.0'
       - run: sops --version | grep 3.5.0
